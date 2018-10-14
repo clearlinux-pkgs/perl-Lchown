@@ -4,22 +4,31 @@
 #
 Name     : perl-Lchown
 Version  : 1.01
-Release  : 1
+Release  : 2
 URL      : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libl/liblchown-perl/liblchown-perl_1.01-3.debian.tar.xz
 Summary  : use the lchown(2) system call from Perl
 Group    : Development/Tools
 License  : Artistic-1.0-Perl
-Requires: perl-Lchown-lib
-Requires: perl-Lchown-man
-BuildRequires : perl(Module::Build::Compat)
+Requires: perl-Lchown-lib = %{version}-%{release}
+BuildRequires : buildreq-cpan
 
 %description
 Lchown - perl interface to the lchown(2) system call
 The Lchown module provides a perl interface to the lchown(2) UNIX system
 call, on systems that support lchown.  The lchown(2) call is used to
 change the ownership and group of symbolic links.
+
+%package dev
+Summary: dev components for the perl-Lchown package.
+Group: Development
+Requires: perl-Lchown-lib = %{version}-%{release}
+Provides: perl-Lchown-devel = %{version}-%{release}
+
+%description dev
+dev components for the perl-Lchown package.
+
 
 %package lib
 Summary: lib components for the perl-Lchown package.
@@ -29,19 +38,11 @@ Group: Libraries
 lib components for the perl-Lchown package.
 
 
-%package man
-Summary: man components for the perl-Lchown package.
-Group: Default
-
-%description man
-man components for the perl-Lchown package.
-
-
 %prep
-tar -xf %{SOURCE1}
-cd ..
 %setup -q -n Lchown-1.01
-mkdir -p %{_topdir}/BUILD/Lchown-1.01/deblicense/
+cd ..
+%setup -q -T -D -n Lchown-1.01 -b 1
+mkdir -p deblicense/
 mv %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Lchown-1.01/deblicense/
 
 %build
@@ -67,9 +68,9 @@ make TEST_VERBOSE=1 test
 %install
 rm -rf %{buildroot}
 if test -f Makefile.PL; then
-make pure_install PERL_INSTALL_ROOT=%{buildroot}
+make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
-./Build install --installdirs=site --destdir=%{buildroot}
+./Build install --installdirs=vendor --destdir=%{buildroot}
 fi
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -depth -type d -exec rmdir {} 2>/dev/null ';'
@@ -78,12 +79,12 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files
 %defattr(-,root,root,-)
-/usr/lib/perl5/site_perl/5.26.1/x86_64-linux-thread-multi/Lchown.pm
+/usr/lib/perl5/vendor_perl/5.26.1/x86_64-linux-thread-multi/Lchown.pm
+
+%files dev
+%defattr(-,root,root,-)
+/usr/share/man/man3/Lchown.3
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib/perl5/site_perl/5.26.1/x86_64-linux-thread-multi/auto/Lchown/Lchown.so
-
-%files man
-%defattr(-,root,root,-)
-/usr/share/man/man3/Lchown.3
+/usr/lib/perl5/vendor_perl/5.26.1/x86_64-linux-thread-multi/auto/Lchown/Lchown.so
