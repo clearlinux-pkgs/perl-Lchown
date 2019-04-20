@@ -4,14 +4,15 @@
 #
 Name     : perl-Lchown
 Version  : 1.01
-Release  : 10
+Release  : 11
 URL      : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libl/liblchown-perl/liblchown-perl_1.01-3.debian.tar.xz
 Summary  : use the lchown(2) system call from Perl
 Group    : Development/Tools
-License  : Artistic-1.0-Perl
+License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
 Requires: perl-Lchown-lib = %{version}-%{release}
+Requires: perl-Lchown-license = %{version}-%{release}
 BuildRequires : buildreq-cpan
 
 %description
@@ -25,6 +26,7 @@ Summary: dev components for the perl-Lchown package.
 Group: Development
 Requires: perl-Lchown-lib = %{version}-%{release}
 Provides: perl-Lchown-devel = %{version}-%{release}
+Requires: perl-Lchown = %{version}-%{release}
 
 %description dev
 dev components for the perl-Lchown package.
@@ -33,9 +35,18 @@ dev components for the perl-Lchown package.
 %package lib
 Summary: lib components for the perl-Lchown package.
 Group: Libraries
+Requires: perl-Lchown-license = %{version}-%{release}
 
 %description lib
 lib components for the perl-Lchown package.
+
+
+%package license
+Summary: license components for the perl-Lchown package.
+Group: Default
+
+%description license
+license components for the perl-Lchown package.
 
 
 %prep
@@ -43,7 +54,7 @@ lib components for the perl-Lchown package.
 cd ..
 %setup -q -T -D -n Lchown-1.01 -b 1
 mkdir -p deblicense/
-mv %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Lchown-1.01/deblicense/
+cp -r %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Lchown-1.01/deblicense/
 
 %build
 export http_proxy=http://127.0.0.1:9/
@@ -67,6 +78,8 @@ make TEST_VERBOSE=1 test
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/perl-Lchown
+cp deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-Lchown/deblicense_copyright
 if test -f Makefile.PL; then
 make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
@@ -88,3 +101,7 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 %files lib
 %defattr(-,root,root,-)
 /usr/lib/perl5/vendor_perl/5.28.2/x86_64-linux-thread-multi/auto/Lchown/Lchown.so
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/perl-Lchown/deblicense_copyright
