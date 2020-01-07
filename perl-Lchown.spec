@@ -4,15 +4,15 @@
 #
 Name     : perl-Lchown
 Version  : 1.01
-Release  : 11
+Release  : 12
 URL      : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libl/liblchown-perl/liblchown-perl_1.01-3.debian.tar.xz
 Summary  : use the lchown(2) system call from Perl
 Group    : Development/Tools
 License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
-Requires: perl-Lchown-lib = %{version}-%{release}
 Requires: perl-Lchown-license = %{version}-%{release}
+Requires: perl-Lchown-perl = %{version}-%{release}
 BuildRequires : buildreq-cpan
 
 %description
@@ -24,21 +24,11 @@ change the ownership and group of symbolic links.
 %package dev
 Summary: dev components for the perl-Lchown package.
 Group: Development
-Requires: perl-Lchown-lib = %{version}-%{release}
 Provides: perl-Lchown-devel = %{version}-%{release}
 Requires: perl-Lchown = %{version}-%{release}
 
 %description dev
 dev components for the perl-Lchown package.
-
-
-%package lib
-Summary: lib components for the perl-Lchown package.
-Group: Libraries
-Requires: perl-Lchown-license = %{version}-%{release}
-
-%description lib
-lib components for the perl-Lchown package.
 
 
 %package license
@@ -49,18 +39,28 @@ Group: Default
 license components for the perl-Lchown package.
 
 
+%package perl
+Summary: perl components for the perl-Lchown package.
+Group: Default
+Requires: perl-Lchown = %{version}-%{release}
+
+%description perl
+perl components for the perl-Lchown package.
+
+
 %prep
 %setup -q -n Lchown-1.01
-cd ..
-%setup -q -T -D -n Lchown-1.01 -b 1
+cd %{_builddir}
+tar xf %{_sourcedir}/liblchown-perl_1.01-3.debian.tar.xz
+cd %{_builddir}/Lchown-1.01
 mkdir -p deblicense/
-cp -r %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Lchown-1.01/deblicense/
+cp -r %{_builddir}/debian/* %{_builddir}/Lchown-1.01/deblicense/
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
+export LANG=C.UTF-8
 if test -f Makefile.PL; then
 %{__perl} Makefile.PL
 make  %{?_smp_mflags}
@@ -70,7 +70,7 @@ else
 fi
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
@@ -79,7 +79,7 @@ make TEST_VERBOSE=1 test
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/perl-Lchown
-cp deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-Lchown/deblicense_copyright
+cp %{_builddir}/Lchown-1.01/deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-Lchown/8fcb670a0a8dea3cc1801dc64f0025b99c2be5f6
 if test -f Makefile.PL; then
 make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
@@ -92,16 +92,16 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files
 %defattr(-,root,root,-)
-/usr/lib/perl5/vendor_perl/5.28.2/x86_64-linux-thread-multi/Lchown.pm
 
 %files dev
 %defattr(-,root,root,-)
 /usr/share/man/man3/Lchown.3
 
-%files lib
-%defattr(-,root,root,-)
-/usr/lib/perl5/vendor_perl/5.28.2/x86_64-linux-thread-multi/auto/Lchown/Lchown.so
-
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/perl-Lchown/deblicense_copyright
+/usr/share/package-licenses/perl-Lchown/8fcb670a0a8dea3cc1801dc64f0025b99c2be5f6
+
+%files perl
+%defattr(-,root,root,-)
+/usr/lib/perl5/vendor_perl/5.30.1/x86_64-linux-thread-multi/Lchown.pm
+/usr/lib/perl5/vendor_perl/5.30.1/x86_64-linux-thread-multi/auto/Lchown/Lchown.so
