@@ -4,7 +4,7 @@
 #
 Name     : perl-Lchown
 Version  : 1.01
-Release  : 18
+Release  : 19
 URL      : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NC/NCLEATON/Lchown-1.01.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libl/liblchown-perl/liblchown-perl_1.01-3.debian.tar.xz
